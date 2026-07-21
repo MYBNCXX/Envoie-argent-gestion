@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* { box-sizing: border-box; }
+body { background: #F6F3EC; color: #1B2130; }
+
+.spin { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin-slow { animation: spin 1s linear infinite; }
+
+.seal-ring {
+  stroke-dasharray: 264;
+  stroke-dashoffset: 264;
+  animation: drawRing .7s ease forwards;
+  transform-origin: center;
+}
+@keyframes drawRing { to { stroke-dashoffset: 0; } }
+
+.seal-check {
+  stroke-dasharray: 50;
+  stroke-dashoffset: 50;
+  animation: drawCheck .35s ease forwards .55s;
+}
+@keyframes drawCheck { to { stroke-dashoffset: 0; } }
+
+::selection { background: #B8873A33; }
+
+/* Révélation douce au scroll (pages publiques) */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: riseIn .6s cubic-bezier(.2,.9,.3,1.1) forwards;
+}
+@keyframes riseIn { to { opacity: 1; transform: translateY(0); } }
