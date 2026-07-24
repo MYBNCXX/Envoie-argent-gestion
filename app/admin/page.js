@@ -6,7 +6,8 @@ import {
 } from "lucide-react";
 import TopBar from "@/components/TopBar";
 import QuotaGauge from "@/components/QuotaGauge";
-import { Field, Input, Textarea, Button, StatusPill, Modal, Toast, useToast, fmt } from "@/components/UI";
+import { Field, Input, Textarea, Select, Button, StatusPill, Modal, Toast, useToast, fmt } from "@/components/UI";
+import { CURRENCIES, DEFAULT_CURRENCY, formatMoney } from "@/lib/currency";
 
 export default function AdminPage() {
   const router = useRouter();
@@ -129,7 +130,7 @@ function LinkRow({ link, origin, showToast }) {
     <div className="bg-white rounded-[14px] px-5 py-4 border border-brand-line flex items-center justify-between gap-4 flex-wrap">
       <div className="min-w-[200px]">
         <p className="font-display font-bold text-[15px] text-brand-ink mb-0.5">{link.prenom} {link.nom}</p>
-        <p className="font-mono text-[12.5px] text-brand-inkFaint">Réf. {link.id} · {fmt(link.montant)} FCFA</p>
+        <p className="font-mono text-[12.5px] text-brand-inkFaint">Réf. {link.id} · {formatMoney(link.montant, link.devise)}</p>
       </div>
       <div className="flex items-center gap-2.5 flex-wrap">
         <StatusPill label={link.viewed ? "Vu" : "Non vu"} color={link.viewed ? "#0E5A56" : "#8B90A0"} bg={link.viewed ? "#E4EFEC" : "#EFEAE0"} icon={link.viewed ? Eye : EyeOff} />
@@ -145,7 +146,7 @@ function LinkRow({ link, origin, showToast }) {
 function NewLinkModal({ origin, onClose, onCreated, showToast, onQuotaExhausted }) {
   const [form, setForm] = useState({
     nom: "", prenom: "", montantTotal: "", numero: "", reseau: "",
-    montant: "", fraisDossier: "", motif: "", code: "",
+    montant: "", fraisDossier: "", devise: DEFAULT_CURRENCY, motif: "", code: "",
   });
   const [created, setCreated] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -206,7 +207,14 @@ function NewLinkModal({ origin, onClose, onCreated, showToast, onQuotaExhausted 
           <Field label="Nom"><Input value={form.nom} onChange={set("nom")} placeholder="Kouassi" required /></Field>
           <Field label="Prénom"><Input value={form.prenom} onChange={set("prenom")} placeholder="Aïcha" required /></Field>
         </div>
-        <Field label="Montant total (FCFA)">
+        <Field label="Devise" hint="S'applique à tous les montants de ce dossier">
+          <Select value={form.devise} onChange={set("devise")}>
+            {CURRENCIES.map((c) => (
+              <option key={c.code} value={c.code}>{c.label}</option>
+            ))}
+          </Select>
+        </Field>
+        <Field label={`Montant total (${form.devise})`}>
           <Input type="number" value={form.montantTotal} onChange={set("montantTotal")} placeholder="150000" required />
         </Field>
         <div className="grid grid-cols-2 gap-3.5">
@@ -216,10 +224,10 @@ function NewLinkModal({ origin, onClose, onCreated, showToast, onQuotaExhausted 
           </Field>
         </div>
         <div className="grid grid-cols-2 gap-3.5">
-          <Field label="Montant (FCFA)" hint="Montant principal affiché">
+          <Field label={`Montant (${form.devise})`} hint="Montant principal affiché">
             <Input type="number" value={form.montant} onChange={set("montant")} placeholder="45000" required />
           </Field>
-          <Field label="Frais de dossier (FCFA)" hint="Frais à payer, affichés dans un cadre à part">
+          <Field label={`Frais de dossier (${form.devise})`} hint="Frais à payer, affichés dans un cadre à part">
             <Input type="number" value={form.fraisDossier} onChange={set("fraisDossier")} placeholder="2500" required />
           </Field>
         </div>

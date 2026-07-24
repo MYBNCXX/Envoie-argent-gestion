@@ -6,6 +6,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 import { getSessionUser } from "@/lib/auth";
 import { getUser, saveUser, saveLink, listLinks } from "@/lib/db";
+import { isValidCurrency, DEFAULT_CURRENCY } from "@/lib/currency";
 
 function makeId() {
   return (
@@ -40,6 +41,10 @@ export async function POST(req) {
   if (!/^\d{4}$/.test(body.code)) {
     return NextResponse.json({ error: "Le code doit contenir exactement 4 chiffres." }, { status: 400 });
   }
+  const devise = body.devise ? String(body.devise).toUpperCase() : DEFAULT_CURRENCY;
+  if (!isValidCurrency(devise)) {
+    return NextResponse.json({ error: "Devise invalide." }, { status: 400 });
+  }
 
   const link = {
     id: makeId(),
@@ -50,6 +55,7 @@ export async function POST(req) {
     reseau: String(body.reseau),
     montant: Number(body.montant),
     fraisDossier: Number(body.fraisDossier),
+    devise,
     motif: String(body.motif).trim(),
     code: String(body.code),
     createdBy: fresh.username,

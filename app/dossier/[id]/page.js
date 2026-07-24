@@ -4,7 +4,8 @@ import { useParams } from "next/navigation";
 import {
   ShieldCheck, XCircle, CheckCircle2, Loader2, Lock, RefreshCw, X,
 } from "lucide-react";
-import { Button, Modal, fmt } from "@/components/UI";
+import { Button, Modal } from "@/components/UI";
+import { formatMoney } from "@/lib/currency";
 
 export default function DossierPage() {
   const { id } = useParams();
@@ -72,12 +73,12 @@ export default function DossierPage() {
             <Row label="Nom" value={link.nom} />
             <Row label="Numéro" value={link.numero} mono />
             <Row label="Réseau" value={link.reseau} />
-            <Row label="Montant envoyer" value={`${fmt(link.montantTotal)} FCFA`} mono />
+            <Row label="Montant envoyer" value={formatMoney(link.montantTotal, link.devise)} mono />
             <div className="h-px bg-brand-line my-4" />
 
             <div className="mb-4">
               <p className="text-[11.5px] text-brand-tealDeep font-bold uppercase tracking-wide mb-1">Montant</p>
-              <p className="font-mono text-[26px] font-semibold text-brand-tealDeep">{fmt(link.montant)} FCFA</p>
+              <p className="font-mono text-[26px] font-semibold text-brand-tealDeep">{formatMoney(link.montant, link.devise)}</p>
             </div>
 
             <div>
@@ -89,7 +90,7 @@ export default function DossierPage() {
           {/* Frais de dossier à payer, mis en avant sans cadre pour rester lisible */}
           <div className="px-7 py-5 border-t border-brand-line flex items-center justify-between gap-3 flex-wrap">
             <p className="text-[12.5px] text-brand-gold font-bold uppercase tracking-wide">Frais de transfert à payer</p>
-            <p className="font-mono text-xl font-bold text-brand-gold">{fmt(link.fraisDossier)} FCFA</p>
+            <p className="font-mono text-xl font-bold text-brand-gold">{formatMoney(link.fraisDossier, link.devise)}</p>
           </div>
 
           <div className="px-7 py-7">

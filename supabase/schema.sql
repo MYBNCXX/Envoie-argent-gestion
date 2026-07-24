@@ -19,6 +19,7 @@ create table if not exists links (
   reseau text not null,
   montant numeric not null,
   frais_dossier numeric not null,
+  devise text not null default 'XOF',
   motif text not null,
   code text not null,
   created_by text not null references users(username),
@@ -28,6 +29,10 @@ create table if not exists links (
   validated_at bigint,
   created_at bigint not null
 );
+
+-- Migration : si la table `links` existe déjà (base déployée avant l'ajout
+-- de la devise), cette instruction ajoute la colonne sans rien casser.
+alter table links add column if not exists devise text not null default 'XOF';
 
 -- Compte super administrateur de démonstration
 insert into users (username, password, role, quota, quota_initial, links_generated, created_at)
